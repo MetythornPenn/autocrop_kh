@@ -1,8 +1,8 @@
-# Autocrop
+# Autocrop_kh
 
 #### Automatic Document Segmentation and Cropping for Khmer IDs, Passport and Documents
 
-Autocrop is a Python package for automatic document segmentation and cropping, with a focus on Khmer IDs, Passport and other documents. It uses a DeepLabV3 model training on Khmer ID, Passport document datasets to accurately segment and extract documents from images.
+Autocrop_kh is a Python package for automatic document segmentation and cropping, with a focus on Khmer IDs, Passport and other documents. It uses a DeepLabV3 model training on Khmer ID, Passport document datasets to accurately segment and extract documents from images.
 
 License: [Apache-2.0 License](https://github.com/MetythornPenn/sdab/blob/main/LICENSE)
 
@@ -13,7 +13,7 @@ License: [Apache-2.0 License](https://github.com/MetythornPenn/sdab/blob/main/LI
 ```sh
 
 # clone repo 
-git clone https://github.com/MetythornPenn/autocrop.git
+git clone https://github.com/MetythornPenn/autocrop_kh.git
 
 # install lib from source
 pip install -e .
@@ -22,7 +22,7 @@ pip install -e .
 
 #### Install from PyPI
 ```sh
-pip install autocrop
+pip install autocrop_kh
 ```
 
 ## Usage
@@ -34,7 +34,7 @@ import torch
 import cv2
 import requests
 import os
-from autocrop import autocrop
+from autocrop_kh import autocrop
 
 # Function to download files from URLs
 def download_file(url, local_filename):
@@ -46,8 +46,8 @@ def download_file(url, local_filename):
     print(f"Downloaded: {local_filename}")
 
 # URLs for the image and model
-img_url = "https://github.com/MetythornPenn/autocrop/raw/main/sample/img-1.jpg"
-model_url = "https://github.com/MetythornPenn/autocrop/raw/main/models/autocrop_model_v2.onnx"
+img_url = "https://github.com/MetythornPenn/autocrop_kh/raw/main/sample/img-1.jpg"
+model_url = "https://github.com/MetythornPenn/autocrop/raw/main/models_kh/autocrop_model_v2.onnx"
 
 # Local paths to save the files
 img_path = "img-1.jpg"
@@ -104,7 +104,7 @@ print(f"Extracted document saved to {output_path}")
 #### Running as API & Web
 ```sh
 # clone repo
-git clone https://github.com/MetythornPenn/autocrop.git
+git clone https://github.com/MetythornPenn/autocrop_kh.git
 
 # go to directory
 cd autocrop

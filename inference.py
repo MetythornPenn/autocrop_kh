@@ -1,6 +1,6 @@
 import torch 
 import cv2
-from autocrop import autocrop
+from autocrop_kh import autocrop
 
 
 img_path = "sample/img-1.jpg" # support pillow image, numpy image and image path

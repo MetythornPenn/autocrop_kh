@@ -5,7 +5,7 @@ import numpy as np
 import os
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import StreamingResponse
-from autocrop import autocrop, load_autocrop_model
+from autocrop_kh import autocrop, load_autocrop_model
 
 app = FastAPI()
 
