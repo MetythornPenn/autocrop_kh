@@ -4,8 +4,8 @@ from PIL import Image
 from io import BytesIO
 
 # Define the FastAPI server endpoint
-# API_URL = "http://127.0.0.1:5555/crop-image/"
-API_URL = "http://api:5555/crop-image/"
+API_URL = "http://127.0.0.1:5555/crop-image/"
+# API_URL = "http://api:5555/crop-image/"
 
 def process_image(image):
     """Send the image to the FastAPI API and return both original and cropped image."""
