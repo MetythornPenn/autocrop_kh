@@ -2,15 +2,19 @@ import os
 import gc
 import cv2
 import numpy as np
-
 import torch
 import torch.nn as nn
-import torchvision.transforms as torchvision_T     
-from torchvision.models.segmentation import deeplabv3_resnet50
+import torchvision.transforms as torchvision_T
 from torchvision.models.segmentation import deeplabv3_mobilenet_v3_large
+import onnxruntime as ort
+from PIL import Image
 
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
+
+# Suppress ONNX Runtime warnings by setting environment variables
+os.environ["ORT_LOGGING_LEVEL"] = "3"  # Set to 3 to suppress warnings and only show errors
+
 
 def order_points(pts):
     rect = np.zeros((4, 2), dtype="float32")
@@ -18,7 +22,6 @@ def order_points(pts):
     s = pts.sum(axis=1)
     rect[0] = pts[np.argmin(s)]
     rect[2] = pts[np.argmax(s)]
-
     diff = np.diff(pts, axis=1)
     rect[1] = pts[np.argmin(diff)]
     rect[3] = pts[np.argmax(diff)]
@@ -41,21 +44,25 @@ def image_preproces_transforms(mean=(0.4611, 0.4359, 0.3905), std=(0.2193, 0.215
     )
     return common_transforms
 
-def load_model(num_classes=1, model_name="mbv3", checkpoint_path=None, device=None):
-    if model_name == "mbv3":
+def load_autocrop_model(checkpoint_path, device):
+    if checkpoint_path.endswith('.pth'):
+        num_classes = 2
         model = deeplabv3_mobilenet_v3_large(num_classes=num_classes)
+        model.to(device)
+        checkpoints = torch.load(checkpoint_path, map_location=device)
+        model.load_state_dict(checkpoints, strict=False)
+        model.eval()
+        return model, 'torch'
+    elif checkpoint_path.endswith('.onnx'):
+        # Load the ONNX model
+        session = ort.InferenceSession(checkpoint_path, providers=['CUDAExecutionProvider' if device == 'cuda' else 'CPUExecutionProvider'])
+        return session, 'onnx'
     else:
-        model = deeplabv3_resnet50(num_classes=num_classes)
-
-    model.to(device)  # Move the model to the specified device (GPU or CPU)
-    checkpoints = torch.load(checkpoint_path, map_location=device)
-    model.load_state_dict(checkpoints, strict=False)
-    model.eval()
-    return model
+        raise ValueError("Unsupported model format. Supported formats are .pth and .onnx")
 
 preprocess_transforms = image_preproces_transforms()
 
-def extract(image_true=None, trained_model=None, image_size=384, BUFFER=10, device=None):
+def extract(image_true=None, trained_model=None, image_size=384, BUFFER=10, device=None, model_type='torch'):
     IMAGE_SIZE = image_size
     half = IMAGE_SIZE // 2
 
@@ -66,10 +73,16 @@ def extract(image_true=None, trained_model=None, image_size=384, BUFFER=10, devi
 
     image_model = preprocess_transforms(image_model)
     image_model = torch.unsqueeze(image_model, dim=0)
-    image_model = image_model.to(device)  # Move to the correct device
 
-    with torch.no_grad():
-        out = trained_model(image_model)["out"].cpu()
+    if model_type == 'torch':
+        image_model = image_model.to(device)
+        with torch.no_grad():
+            out = trained_model(image_model)["out"].cpu()
+    elif model_type == 'onnx':
+        image_model = image_model.numpy()  # Convert tensor to numpy for ONNX
+        input_name = trained_model.get_inputs()[0].name
+        output = trained_model.run(None, {input_name: image_model})
+        out = torch.tensor(output[0])
 
     del image_model
     gc.collect()
@@ -142,16 +155,23 @@ def extract(image_true=None, trained_model=None, image_size=384, BUFFER=10, devi
 
     return final
 
-def autocrop(img_path, model_path, device):
-    # Load the model
-    trained_model = load_model(num_classes=2, model_name="mbv3", checkpoint_path=model_path, device=device)
+def autocrop(img_path=None, np_image=None, pil_image=None, model_path=None, device=None):
+    # Load the model and determine type (torch or onnx)
+    trained_model, model_type = load_autocrop_model(checkpoint_path=model_path, device=device)
 
-    # Load the image
-    image = cv2.imread(img_path, cv2.IMREAD_COLOR)[:, :, ::-1]
+    if img_path:
+        # If img_path is provided, read the image from disk
+        image = cv2.imread(img_path, cv2.IMREAD_COLOR)[:, :, ::-1]  # Convert BGR to RGB
+    elif np_image is not None:
+        # If np_image is provided, use it directly
+        image = np_image  # Assuming np_image is already a NumPy array in RGB format
+    elif pil_image is not None:
+        # If pil_image is provided, convert it to NumPy array
+        image = np.array(pil_image)  # Convert PIL image to NumPy array
+    else:
+        raise ValueError("No image input provided. Please provide img_path, np_image, or pil_image.")
 
     # Perform document extraction
-    extracted_image = extract(image_true=image, trained_model=trained_model, device=device)
+    extracted_image = extract(image_true=image, trained_model=trained_model, device=device, model_type=model_type)
 
     return extracted_image
-
-

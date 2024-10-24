@@ -10,12 +10,13 @@ requirements = [
     'torchvision',
     'numpy',
     'opencv-python-headless',
+    'onnx'
     # 'matplotlib'
 ]
 
 setup(
     name='autocrop',
-    version='0.0.1',
+    version='0.0.2',
     packages=['autocrop'],
     url='https://github.com/MetythornPenn/autocrop.git',
     license='Apache Software License 2.0',

@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    ports:
+      - "5555:5555"
+    volumes:
+      - ../models:/app/models
+      - ../sample:/app/sample
+    environment:
+      - MODEL_PATH=/app/models/autocrop_model_v2.onnx
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+    ports:
+      - "7860:7860"
+    depends_on:
+      - api
+    environment:
+      - API_URL=http://api:5555/crop-image/
+    restart: unless-stopped
