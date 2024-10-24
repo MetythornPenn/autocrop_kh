@@ -3,12 +3,9 @@ import gc
 import cv2
 import numpy as np
 import torch
-import torch.nn as nn
 import torchvision.transforms as torchvision_T
 from torchvision.models.segmentation import deeplabv3_mobilenet_v3_large
 import onnxruntime as ort
-from PIL import Image
-import requests
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -176,9 +173,3 @@ def autocrop(img_path=None, np_image=None, pil_image=None, model_path=None, devi
 
     return extracted_image
 
-
-def download_file(url, output_path):
-    response = requests.get(url)
-    response.raise_for_status()  # Check for HTTP errors
-    with open(output_path, 'wb') as file:
-        file.write(response.content)

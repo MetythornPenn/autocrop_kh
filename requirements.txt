@@ -3,3 +3,5 @@ torchvision
 numpy
 opencv-python-headless
 fastapi
+request
+certifi
