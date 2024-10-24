@@ -16,7 +16,7 @@ requirements = [
 
 setup(
     name='autocrop_kh',
-    version='0.0.2',
+    version='0.0.3',
     packages=['autocrop_kh'],
     url='https://github.com/MetythornPenn/autocrop_kh.git',
     license='Apache Software License 2.0',

@@ -22,7 +22,7 @@ pip install -e .
 
 #### Install from PyPI
 ```sh
-pip install autocrop_kh
+pip install autocrop-kh
 ```
 
 ## Usage
@@ -47,7 +47,7 @@ def download_file(url, local_filename):
 
 # URLs for the image and model
 img_url = "https://github.com/MetythornPenn/autocrop_kh/raw/main/sample/img-1.jpg"
-model_url = "https://github.com/MetythornPenn/autocrop/raw/main/models_kh/autocrop_model_v2.onnx"
+model_url = "https://github.com/MetythornPenn/autocrop_kh/raw/main/models/autocrop_model_v2.onnx"
 
 # Local paths to save the files
 img_path = "img-1.jpg"
