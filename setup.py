@@ -15,14 +15,14 @@ requirements = [
 ]
 
 setup(
-    name='autocrop',
+    name='autocrop_kh',
     version='0.0.2',
     packages=['autocrop_kh'],
     url='https://github.com/MetythornPenn/autocrop_kh.git',
     license='Apache Software License 2.0',
     author = 'Metythorn Penn',
     author_email = 'metythorn@gmail.com',
-    keywords='autocrop-kh',
+    keywords='autocrop_kh',
     description='Document Extraction Inference API using DeepLabV3 with Pretrain Model',
     install_requires=requirements,
     long_description=(read('README.md')),
