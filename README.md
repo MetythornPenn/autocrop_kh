@@ -17,6 +17,12 @@ git clone https://github.com/MetythornPenn/autocrop.git
 
 # install lib from source
 pip install -e .
+
+```
+
+#### Install from PyPI
+```sh
+pip install autocrop
 ```
 
 ## Usage
@@ -28,29 +34,29 @@ import torch
 import cv2
 import requests
 
-from autocrop import autocrop
+from autocrop import autocrop, download_file
 
-# Function to download files using requests
-def download_file(url, output_path):
-    response = requests.get(url)
-    response.raise_for_status()  # Check for HTTP errors
-    with open(output_path, 'wb') as file:
-        file.write(response.content)
 
 # URLs for the image and model
 img_url = "https://github.com/MetythornPenn/autocrop/raw/main/sample/img-1.jpg"
-model_url = "https://github.com/MetythornPenn/autocrop/raw/main/models/autocrop_model_mbv3.pth"
+model_url = "https://github.com/MetythornPenn/autocrop/raw/main/models/autocrop_model_v2.onnx"
 
 # Local paths to save the files
 img_path = "img-1.jpg"
-model_path = "autocrop_model_mbv3.pth"
+model_path = "autocrop_model_v2.onnx"
 
 # Download the image and model files
 download_file(img_url, img_path)
 download_file(model_url, model_path)
 
-# Specify device (CPU or CUDA)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Specify device (CPU or CUDA or Apple Silicon GPU)
+if torch.cuda.is_available():
+    device = "cuda" # Use NVIDIA GPU (if available)
+elif torch.backends.mps.is_available():
+    device = "mps" # Use Apple Silicon GPU (if available)
+else:
+    device = "cpu" # Default to CPU if no GPU is available
 
 # Perform document extraction
 extracted_document = autocrop(img_path, model_path, device)
@@ -61,26 +67,25 @@ cv2.imwrite(output_path, extracted_document[:, :, ::-1])  # Convert back to BGR 
 
 print(f"Extracted document saved to {output_path}")
 
-# Display the result (Optional)
-import matplotlib.pyplot as plt
-plt.figure(figsize=(10, 5))
-plt.imshow(extracted_document / 255.0)
-plt.title("Extracted Document")
-plt.show()
 
 
 ```
 
 - `img_path`: Path of the input image file.
-- `model_path`: Path to the pre-trained model (local path).
-- `device`: Specify `cpu` or `cuda` (default is `gpu`).
+- `model_path`: Path to the pre-trained model (local path and support both .onnx and .pth).
+- `device`: Specify `cpu` or `cuda` or `mps` (default is `gpu`).
 - `output_path`: Path where the extracted document image will be saved.
 
 #### Result:
 
 <p align="center">
   <img src="sample/img-1.jpg" alt="Left Image" width="45%">
-  <img src="extracted_document.jpg" alt="Right Image" width="45%">
+  <img src="sample/result-img-1.png" alt="Right Image" width="45%">
+</p>
+
+<p align="center">
+  <img src="sample/img-5.png" alt="Left Image" width="45%">
+  <img src="sample/result-img-5.png" alt="Right Image" width="45%">
 </p>
 
 
