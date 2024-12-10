@@ -36,7 +36,6 @@ import requests
 import os
 from autocrop_kh import autocrop
 
-# Function to download files from URLs
 def download_file(url, local_filename):
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
@@ -45,36 +44,32 @@ def download_file(url, local_filename):
                 f.write(chunk)
     print(f"Downloaded: {local_filename}")
 
-# URLs for the image and model
 img_url = "https://github.com/MetythornPenn/autocrop_kh/raw/main/sample/img-1.jpg"
 model_url = "https://github.com/MetythornPenn/autocrop_kh/raw/main/models/autocrop_model_v2.onnx"
-
-# Local paths to save the files
 img_path = "img-1.jpg"
 model_path = "autocrop_model_v2.onnx"
 
-# Download the image and model files
 download_file(img_url, img_path)
 download_file(model_url, model_path)
 
-# Verify the files are correctly downloaded
 if not os.path.exists(img_path):
     raise FileNotFoundError(f"Image file {img_path} was not found.")
 if not os.path.exists(model_path):
     raise FileNotFoundError(f"Model file {model_path} was not found.")
 
-# Specify device (CPU or CUDA or Apple Silicon GPU)
 if torch.cuda.is_available():
-    device = "cuda"  # Use NVIDIA GPU (if available)
+    device = "cuda"
 elif torch.backends.mps.is_available():
-    device = "mps"  # Use Apple Silicon GPU (if available)
+    device = "mps"
 else:
-    device = "cpu"  # Default to CPU if no GPU is available
+    device = "cpu"
 
-# Perform document extraction
-extracted_document = autocrop(img_path=img_path, model_path=model_path, device=device)
+extracted_document = autocrop(
+    img_path=img_path,
+    model_path=model_path, 
+    device=device)
 
-# Save the extracted document
+
 output_path = "extracted_document.jpg"
 cv2.imwrite(output_path, extracted_document[:, :, ::-1])  # Convert back to BGR for saving
 
