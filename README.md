@@ -72,7 +72,6 @@ extracted_document = autocrop(
 
 output_path = "extracted_document.jpg"
 cv2.imwrite(output_path, extracted_document[:, :, ::-1])  # Convert back to BGR for saving
-
 print(f"Extracted document saved to {output_path}")
 
 
