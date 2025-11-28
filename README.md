@@ -66,25 +66,7 @@ print(f"Extracted document saved to {output_path}")
 </p>
 
 
-#### Running as API & Web
-```sh
-# clone repo
-git clone https://github.com/MetythornPenn/autocrop_kh.git
 
-# go to directory
-cd autocrop
-
-# install libraries
-pip3 install -r requirements.txt
-
-# start server (http://localhost:5555/docs)
-make server
-
-# start client ((http://localhost:7860))
-make client 
-
-```
 **Noted** : This model was trained with 25000 datasets include opensource data and my custom synthetic data.
 ## Reference 
 - Inspired by [DeepLabV3](https://paperswithcode.com/method/deeplabv3)
-- [Publish python package to PyPI](https://www.youtube.com/watch?v=90PWQEc--6k)
