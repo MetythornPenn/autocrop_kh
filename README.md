@@ -30,10 +30,7 @@ pip install autocrop-kh
 #### Python Script
 
 ```python
-import torch
 import cv2
-import requests
-import os
 from autocrop_kh import autocrop
 
 # Download sample image from this url : "https://github.com/MetythornPenn/autocrop_kh/raw/main/sample/img-1.jpg"
