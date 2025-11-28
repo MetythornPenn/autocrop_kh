@@ -1,4 +1,4 @@
-# Autocrop_kh
+# autocrop_kh
 
 #### Automatic Document Segmentation and Cropping for Khmer IDs, Passport and Documents
 
